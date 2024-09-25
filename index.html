@@ -1,0 +1,250 @@
+<!-- 
+Code expanded from: 
+- https://codepen.io/AdrianBL/pen/poXeYRx 
+- https://stackoverflow.com/questions/22659164/read-a-drag-and-dropped-file
+- https://stackoverflow.com/questions/18294419/check-if-any-of-multiple-strings-exist-in-a-string
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esri Tile Counter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+    
+    :root {
+      --primary: #111926;
+      --white: #fff;
+      --background: #F8F8FF;
+      --gray: #D3D3D3;
+    }
+    #placeholder {
+      text-align: center;
+    }
+    
+    body {
+      font-family: 'Work Sans', sans-serif;
+      background-color: var(--background);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+    
+    .dropzone-box {
+      border-radius: 2rem;
+      padding: 2rem;
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      max-width: 36rem;
+      width: 100%;
+      background-color: var(--white);
+    }
+    
+    .dropzone-box h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .dropzone-area {
+      padding: 1rem;
+      position: relative;
+      margin-top: 1rem;
+      min-height: 16rem;
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      border: 2px dashed var(--primary);
+      border-radius: 1rem;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    
+    .dropzone-area [type="file"] {
+      cursor: pointer;
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    
+    .dropzone-area .file-upload-icon svg {
+      height: 5rem;
+      width: 5rem;
+      margin-bottom: 0.5rem;
+      stroke: var(--primary);
+    }
+    
+    .dropzone--over {
+      border-style: solid;
+      background-color: var(--background);
+    }
+    
+    .dropzone-actions {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--gray);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .dropzone-actions button {
+      flex-grow: 1;
+      min-height: 3rem;
+      font-size: 1.2rem;
+    }
+    
+    .dropzone-actions button:hover {
+      text-decoration: underline;
+    }
+    
+    .dropzone-actions button[type='reset'] {
+      background-color: transparent;
+      border: 1px solid var(--gray);
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    
+    .dropzone-actions button[type='submit'] {
+      background-color: var(--primary);
+      border: 1px solid var(--primary);
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: var(--white);
+      cursor: pointer;
+    }
+    .github-fork-ribbon:before { background-color: #333; }
+  </style>
+  
+</head>
+<body>
+  <a class="github-fork-ribbon" href="https://url.to-your.repo" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+  
+  <form class="dropzone-box">
+    <h2>Esri Tile Counter</h2>
+    <p>Load the HAR file. Learn <a href="https://support.google.com/admanager/answer/10358597?hl=en">how to export the HAR file</a>.</p>
+    <div class="dropzone-area">
+      <div class="file-upload-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+          <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+        </svg>
+      </div>
+      <p>Click to upload or drag and drop</p>
+      <input type="file" required id="upload-file" name="uploaded-file">
+      <p class="message">No files selected</p>
+    </div>
+    <div id="placeholder"></div>
+  </div>
+</form>
+
+
+<script>
+  const dropzoneBox = document.getElementsByClassName("dropzone-box")[0];
+  
+  const inputFiles = document.querySelectorAll(
+  ".dropzone-area input[type='file']"
+  );
+  
+  const inputElement = inputFiles[0];
+  
+  const dropZoneElement = inputElement.closest(".dropzone-area");
+  
+  inputElement.addEventListener("change", (e) => {
+    if (inputElement.files.length) {
+      updateDropzoneFileList(dropZoneElement, inputElement.files[0]);
+      debugger
+    }
+  });
+  
+  dropZoneElement.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZoneElement.classList.add("dropzone--over");
+  });
+  
+  ["dragleave", "dragend"].forEach((type) => {
+    dropZoneElement.addEventListener(type, (e) => {
+      dropZoneElement.classList.remove("dropzone--over");
+    });
+  });
+  
+  dropZoneElement.addEventListener("drop", (e) => {
+    e.preventDefault();
+    
+    if (e.dataTransfer.files.length) {
+      inputElement.files = e.dataTransfer.files;
+      
+      e.dataTransfer.items[0].getAsString(f => { 
+        debugger
+      })
+      updateDropzoneFileList(dropZoneElement, e.dataTransfer.files[0]);
+      
+    }
+    
+    dropZoneElement.classList.remove("dropzone--over");
+  });
+  
+  const updateDropzoneFileList = (dropzoneElement, file) => {
+    let dropzoneFileMessage = dropzoneElement.querySelector(".message");
+    
+    dropzoneFileMessage.innerHTML = `
+        ${file.name}, ${file.size} bytes
+    `;
+    reader = new FileReader();
+    reader.onload = function (event) {
+      console.log(event.target.result);
+      //holder.style.background = 'url(' + event.target.result + ') no-repeat center';
+      const basemapsPaths = [
+      "https://basemaps-api.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/",
+      "https://basemaps-api.arcgis.com/arcgis/rest/services/OpenStreetMap_v2/VectorTileServer/tile/",
+      "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/",
+      "https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/",
+      "https://ibasemaps-api.arcgis.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/"
+      ]
+      let obj = JSON.parse(event.target.result)
+      let tiles = obj.log.entries.filter(e => {
+        return RegExp(basemapsPaths.join('|')).test(e.request.url);
+      })
+      
+      let cachedTiles = tiles.filter(e => e["_fromCache"] === "disk")
+      
+      console.log(`Tiles: ${tiles.length}, from cache: ${cachedTiles.length}`)
+      
+      const txt = `
+      <div class="dropzone-actions"></div>
+        Total tiles: ${tiles.length} | From browser cache: ${cachedTiles.length}
+      </div>
+      `
+      
+      let app = document.querySelector('#placeholder');
+      app.innerHTML = txt
+      
+      
+    };
+    console.log(file);
+    reader.readAsText(file);
+  };
+  
+  
+</script>
+</body>
+</html>
