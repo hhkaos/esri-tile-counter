@@ -1,8 +1,8 @@
 # esri-tile-counter
 
-Explore the network request (HAR file) a discover how many tiles where used, and how many came from the browser cache.
+Explore the network request (HAR file) a discover how many tiles where used, and how many came from the browser cache:
 
-**Demo**: [https://hhkaos.github.io/esri-tile-counter](https://hhkaos.github.io/esri-tile-counter)
+**Demo**: [https://hhkaos.github.io/esri-tile-counter](https://hhkaos.github.io/esri-tile-counter) (**[video tutorial](https://www.youtube.com/watch?v=zeJeOr6wLEM)**)
 
 [![Tile counter animation](./esri-tile-counter.gif)](https://youtu.be/zeJeOr6wLEM)
 
