@@ -225,13 +225,19 @@ Code expanded from:
         return RegExp(basemapsPaths.join('|')).test(e.request.url);
       })
       
+    
       let cachedTiles = tiles.filter(e => e["_fromCache"] === "disk")
+      let canceledRequests = tiles.filter(e => e.response["_error"] === "net::ERR_ABORTED")
+      
       
       console.log(`Tiles: ${tiles.length}, from cache: ${cachedTiles.length}`)
       
       const txt = `
       <div class="dropzone-actions"></div>
-        Total tiles: ${tiles.length} | From browser cache: ${cachedTiles.length}
+        <p><strong>Tiles requested by the browser</strong>: ${tiles.length}</p>
+        <p><strong>From browser cache</strong>: ${cachedTiles.length} (not charged)</p>
+        <p><strong>Request canceled by the browser</strong>: ${canceledRequests.length} (not charged)</p> 
+        <p><strong>Provided (aprox)</strong>: ${tiles.length-cachedTiles.length-canceledRequests.length} (charged)</p>
       </div>
       `
       
