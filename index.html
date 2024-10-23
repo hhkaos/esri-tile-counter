@@ -235,9 +235,9 @@ Code expanded from:
       const txt = `
       <div class="dropzone-actions"></div>
         <p><strong>Tiles requested by the browser</strong>: ${tiles.length}</p>
-        <p><strong>From browser cache</strong>: ${cachedTiles.length} (not charged)</p>
-        <p><strong>Request canceled by the browser</strong>: ${canceledRequests.length} (not charged)</p> 
-        <p><strong>Provided (aprox)</strong>: ${tiles.length-cachedTiles.length-canceledRequests.length} (charged)</p>
+        <p><strong>From <a href="https://developer.mozilla.org/en-US/docs/Web/API/Cache">browser cache</a></strong>: ${cachedTiles.length} (not charged)</p>
+        <p><strong><a href="https://medium.com/@itskishankumar98/api-cancellation-on-the-browser-5504bb68c974">Request canceled by the browser</a></strong>: ${canceledRequests.length} (might be charged)</p> 
+        <p><strong>Provided by Esri (server or CND)(aprox)</strong>: ${tiles.length-cachedTiles.length-canceledRequests.length} (charged)</p>
       </div>
       `
       
