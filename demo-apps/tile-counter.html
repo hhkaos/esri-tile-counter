@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Basemap Gallery component | Sample | ArcGIS Maps SDK for JavaScript 4.33</title>
+  <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #overlay{
+        margin: 1rem 1rem 0 0;
+        z-index: 99999;
+        background-color: rgba(255, 255, 255, 0.735);
+        padding: 1rem;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 200px;
+        font-size: 1.3rem;
+        text-align: center;
+      }
+      .esri-basemap-gallery{
+        width: 200px !important;
+      }
+    </style>
+  <!-- Load Calcite components from CDN -->
+  <script type="module" src="https://js.arcgis.com/calcite-components/3.2.1/calcite.esm.js"></script>
+  
+  <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.33/"></script>
+  
+  <!-- Load Map components from CDN-->
+  
+</head>
+
+<body>
+  <div id="overlay"></div>
+  <div id="viewDiv"></div>
+  <script type="module">
+    //   const [
+    //     reactiveUtils,
+    
+    //   ] = await $arcgis.import([
+    //     "@arcgis/core/core/reactiveUtils.js",
+    //     "@arcgis/core/symbols/ExtrudeSymbol3DLayer.js",
+    // ]);
+    
+
+    
+    const [Map, MapView, config, BasemapGallery, LocalBasemapsSource, Basemap] = await $arcgis.import([
+    "@arcgis/core/Map.js",
+    "@arcgis/core/views/MapView.js",
+    "@arcgis/core/config.js",
+    "@arcgis/core/widgets/BasemapGallery",
+    "@arcgis/core/widgets/BasemapGallery/support/LocalBasemapsSource.js",
+    "@arcgis/core/Basemap.js"
+    ]);
+
+    config.apiKey="YOUR_API_KEY";
+    
+    const map = new Map({
+      basemap: "streets-navigation-vector",
+    });
+    
+    const view = new MapView({
+      container: "viewDiv",
+      map: map,
+      
+      zoom: 2,
+      center: [-4, 40], // longitude, latitude
+    });
+
+    // Build the styles you want to appear in the gallery
+    const outdoor = new Basemap({
+      style: { id: "arcgis/outdoor" },
+      title: "Outdoor"
+    });
+    const navigation = new Basemap({
+      style: { id: "arcgis/navigation" },
+      title: "Outdoor"
+    });
+    
+    const nova = new Basemap({
+      style: { id: "arcgis/nova" },
+      title: "Nova"
+    });
+
+    const community = new Basemap({
+      style: { id: "arcgis/community" },
+      title: "Community"
+    });
+    
+    
+    const antique = new Basemap({
+      style: { id: "arcgis/modern-antique" },
+      title: "Outdoor"
+    });
+    const light = new Basemap({
+      style: { id: "arcgis/light-gray/base" },
+      title: "Outdoor"
+    });
+    const midcentury = new Basemap({
+      style: { id: "arcgis/midcentury" },
+      title: "Outdoor"
+    });
+    const newspaper = new Basemap({
+      style: { id: "arcgis/newspaper" },
+      title: "Outdoor"
+    });
+    const territory = new Basemap({
+      style: { id: "arcgis/charted-territory" },
+      title: "Outdoor"
+    });
+    
+    
+    
+    
+    
+
+    // Optional: add a few more for context
+    const imagery = new Basemap({ style: { id: "arcgis/imagery" }, title: "Imagery" });
+    const topo = new Basemap({ style: { id: "arcgis/topographic" }, title: "Topographic" });
+
+    const basemapGallery = new BasemapGallery({
+      view,
+      source: new LocalBasemapsSource({
+        basemaps: [outdoor , navigation, community, nova, antique,midcentury, imagery,newspaper, topo, territory, light]
+      })
+    });
+    view.ui.add(basemapGallery, "bottom-right");
+    
+    var tilesSeen = {};
+    tilesSeen.current = {}
+    var tileCounter = 0;
+    var overlayEl = document.getElementById("overlay");
+    config.request.interceptors.push({
+      urls: [
+      // "https://services.arcgisonline.com/rest/services/",
+      "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/",
+      "https://server.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/",
+      "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/",
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/",
+      "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tilemap/",
+      "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/",
+        "https://basemaps.arcgis.com/arcgis/rest/services/OpenStreetMap_v2/VectorTileServer/tile/",
+        "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/",
+        "https://basemaps.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/",
+        "https://basemaps.arcgis.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/",
+        "https://basemaps.arcgis.com/arcgis/rest/services/World_Hillshade_v2/VectorTileServer/tile",
+        "https://basemaps-api.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/"
+      ],
+      
+      before: function (params) {
+        
+            
+        const [, z, x, y] = params.url.match(/\/(\d+)\/(\d+)\/(\d+)/);
+        const tilePath = `${z}/${x}/${y}`;
+      //  console.log(tilePath)
+        console.log("tilesSeen=",tilesSeen)
+        if (!tilesSeen.current[tilePath]) {
+          tilesSeen.current[tilePath] = true;
+          tileCounter++;
+        }
+        overlayEl.innerText = `Tiles: ${tileCounter}`
+        // overlayEl.innerText = `Basemap sessions: 1`
+        // debugger
+      }
+    });
+  </script>
+</body>
+
+
+
+</html>
